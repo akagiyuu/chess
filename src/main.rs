@@ -21,21 +21,7 @@ fn init(
 
 fn main() {
     App::new()
-        .add_plugins(
-            DefaultPlugins
-                .set(AssetPlugin {
-                    // Tell the asset server to watch for asset changes on disk:
-                    watch_for_changes: true,
-                    ..default()
-                })
-                .set(WindowPlugin {
-                    window: WindowDescriptor {
-                        title: "test".to_string(),
-                        ..default()
-                    },
-                    ..default()
-                }),
-        )
+        .add_plugins( DefaultPlugins)
         .add_startup_system(init)
         .add_startup_system(board::init)
         .add_startup_system(pieces::init)
