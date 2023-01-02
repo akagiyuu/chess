@@ -3,9 +3,9 @@ use bevy::prelude::*;
 
 #[derive(Debug)]
 pub struct PieceMesh {
-    cached: Vec<Handle<bevy::prelude::Mesh>>,
-    align: Vec3,
-    kind: Kind,
+    pub cached: Vec<Handle<bevy::prelude::Mesh>>,
+    pub align: Vec3,
+    pub kind: Kind,
 }
 
 impl PieceMesh {

@@ -1,6 +1,6 @@
 use std::slice::Iter;
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum Kind {
     King,
     Queen,
