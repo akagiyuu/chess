@@ -7,3 +7,6 @@ edition = "2021"
 
 [dependencies]
 bevy = { version = "0.9.1", features = ["dynamic", "filesystem_watcher"] }
+bevy_mod_picking = "0.11.0"
+strum = { version = "0.24.1", features = ["strum_macros"] }
+strum_macros = "0.24.3"

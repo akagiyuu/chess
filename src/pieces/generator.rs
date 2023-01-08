@@ -1,43 +1,40 @@
 use super::mesh::PieceMesh;
+use super::PieceKind;
+use super::PieceSide;
 use bevy::{prelude::*, utils::HashMap};
+use strum::IntoEnumIterator;
 
 pub struct Point {
     pub x: f32,
     pub y: f32,
 }
-pub enum Side {
-    Black,
-    White,
+
+pub struct PieceGenerator {
+    materials: HashMap<PieceSide, Handle<StandardMaterial>>,
+    meshes: HashMap<PieceKind, PieceMesh>,
 }
 
-pub struct Generator {
-    black: Handle<StandardMaterial>,
-    white: Handle<StandardMaterial>,
-    meshes: HashMap<super::kind::Kind, PieceMesh>,
-}
-
-impl Generator {
+impl PieceGenerator {
     pub fn new(
         asset_server: &Res<AssetServer>,
         materials: &mut ResMut<Assets<StandardMaterial>>,
     ) -> Self {
-        let mut cached = HashMap::new();
-        for &kind in super::kind::Kind::iter() {
-            cached.insert(kind, PieceMesh::new(asset_server, kind));
+        let mut meshes = HashMap::new();
+        for kind in PieceKind::iter() {
+            meshes.insert(kind, PieceMesh::new(asset_server, kind));
         }
 
         Self {
-            black: materials.add(Color::rgb(0., 0.2, 0.2).into()),
-            white: materials.add(Color::rgb(1., 0.8, 0.8).into()),
-            meshes: cached,
+            materials: HashMap::from([
+                (PieceSide::Black, materials.add(Color::rgb(0., 0.2, 0.2).into())),
+                (PieceSide::White, materials.add(Color::rgb(1., 0.8, 0.8).into())),
+            ]),
+            meshes,
         }
     }
-    pub fn spawn(&self, commands: &mut Commands, kind: super::kind::Kind, side: Side, position: Point) {
+    pub fn spawn(&self, commands: &mut Commands, kind: PieceKind, side: PieceSide, position: Point) {
         let mesh = &self.meshes[&kind];
-        let material = match side {
-            Side::Black => &self.black,
-            Side::White => &self.white,
-        };
+        let material = &self.materials[&side];
         let position = Vec3::new(position.x, 0., position.y);
 
         commands
@@ -58,6 +55,5 @@ impl Generator {
                     });
                 })
             });
-
     }
 }

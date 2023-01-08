@@ -1,132 +1,53 @@
+pub mod bundle;
 pub mod generator;
-pub mod asset;
-pub mod kind;
 pub mod mesh;
 
 use bevy::prelude::*;
-use generator::{Generator, Side, Point};
-use kind::Kind;
+use generator::{PieceGenerator, Point};
+use bundle::*;
+use strum_macros::EnumIter;
+
+fn bundle(mesh: Handle<Mesh>, material: Handle<StandardMaterial>, position: Vec3) -> PbrBundle {
+    PbrBundle {
+        mesh,
+        material,
+        transform: Transform::from_translation(position).with_scale(Vec3::new(0.2, 0.2, 0.2)),
+        ..Default::default()
+    }
+}
+
+macro_rules! bundle {
+    ($mesh:expr, $material:expr, $position:expr) => {
+        (
+            PbrBundle {
+                mesh: $mesh,
+                material: $material,
+                transform: Transform::from_translation($position).with_scale(Vec3::new(0.2, 0.2, 0.2)),
+                ..Default::default()
+            },
+
+        )
+    };
+}
 
 pub fn init(
     mut commands: Commands,
-    assset_server: Res<AssetServer>,
+    asset_server: Res<AssetServer>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let pieces_generator = Generator::new(&assset_server, &mut materials);
+    let material_black = materials.add(Color::rgb(0., 0.2, 0.2).into());
+    let material_white = materials.add(Color::rgb(1., 0.8, 0.8).into());
 
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Rook,
-        Side::White,
-        Point { x: 0., y: 0. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Knight,
-        Side::White,
-        Point { x: 0., y: 1. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Bishop,
-        Side::White,
-        Point { x: 0., y: 2. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Queen,
-        Side::White,
-        Point { x: 0., y: 3. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::King,
-        Side::White,
-        Point { x: 0., y: 4. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Bishop,
-        Side::White,
-        Point { x: 0., y: 5. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Knight,
-        Side::White,
-        Point { x: 0., y: 6. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Rook,
-        Side::White,
-        Point { x: 0., y: 7. }
-    );
+    let queen_mesh: Handle<Mesh> = asset_server.load("models/pieces.glb#Mesh3/Primitive0");
+    let rook_mesh: Handle<Mesh> = asset_server.load("models/pieces.glb#Mesh4/Primitive0");
+    let bishop_mesh: Handle<Mesh> = asset_server.load("models/pieces.glb#Mesh0/Primitive0");
+    let pawn_mesh: Handle<Mesh> = asset_server.load("models/pieces.glb#Mesh2/Primitive0");
+    let king_mesh: Handle<Mesh> = asset_server.load("models/pieces.glb#Mesh5/Primitive0");
+    let knight_mesh: Handle<Mesh> = asset_server.load("models/pieces.glb#Mesh1/Primitive0");
 
-    for i in 0..8 {
-        pieces_generator.spawn(
-            &mut commands,
-            Kind::Pawn,
-            Side::White,
-            Point { x: 1., y: i as f32 }
-        );
-    }
-
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Rook,
-        Side::Black,
-        Point { x: 7., y: 0. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Knight,
-        Side::Black,
-        Point { x: 7., y: 1. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Bishop,
-        Side::Black,
-        Point { x: 7., y: 2. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Queen,
-        Side::Black,
-        Point { x: 7., y: 3. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::King,
-        Side::Black,
-        Point { x: 7., y: 4. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Bishop,
-        Side::Black,
-        Point { x: 7., y: 5. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Knight,
-        Side::Black,
-        Point { x: 7., y: 6. }
-    );
-    pieces_generator.spawn(
-        &mut commands,
-        Kind::Rook,
-        Side::Black,
-        Point { x: 7., y: 7. }
-    );
-
-    for i in 0..8 {
-        pieces_generator.spawn(
-            &mut commands,
-            Kind::Pawn,
-            Side::Black,
-            Point { x: 6., y: i as f32 }
-        );
-    }
+    commands.spawn_batch([bundle!(
+        rook_mesh.clone(),
+        material_black.clone(),
+        Vec3::new(0., 0., 0.)
+    )])
 }
