@@ -1,9 +1,6 @@
-use bevy::prelude::{
-    Bundle, Component, GlobalTransform, Handle, Mesh, PbrBundle,
-    StandardMaterial, Transform, Vec3, Visibility,
-};
-use bevy::prelude::ComputedVisibility;
-use super::components::{PieceKind, PieceSide, Position};
+use super::components::{PieceKind, PieceSide};
+use crate::components::Position;
+use bevy::prelude::Bundle;
 
 #[derive(Debug, Bundle, Clone)]
 pub struct PieceBundle {

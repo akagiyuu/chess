@@ -1,18 +1,11 @@
 pub mod bundle;
 pub mod components;
 
-use bevy::{prelude::*, utils::HashMap};
-use bundle::*;
-use components::*;
-
-fn bundle(mesh: Handle<Mesh>, material: Handle<StandardMaterial>, position: Vec3) -> PbrBundle {
-    PbrBundle {
-        mesh,
-        material,
-        transform: Transform::from_translation(position).with_scale(Vec3::new(0.2, 0.2, 0.2)),
-        ..Default::default()
-    }
-}
+use crate::components::Position;
+use bevy::prelude::*;
+use bevy::utils::HashMap;
+use bundle::PieceBundle;
+use components::{PieceKind, PieceSide};
 
 pub fn init(
     mut commands: Commands,

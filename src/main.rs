@@ -1,5 +1,6 @@
 pub mod board;
 pub mod pieces;
+pub mod components;
 
 use bevy::prelude::*;
 use bevy_mod_picking::*;
@@ -24,9 +25,8 @@ fn init(mut commmands: Commands) {
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
-        .add_plugins(DefaultPickingPlugins)
+        .add_plugin(board::BoardPlugin)
         .add_startup_system(init)
-        .add_startup_system(board::init)
         .add_startup_system(pieces::init)
         .run();
 }
