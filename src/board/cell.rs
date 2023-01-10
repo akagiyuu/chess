@@ -12,7 +12,7 @@ impl CellBundle {
     }
 }
 
-#[derive(Default)]
-struct SelectedCell {
-    entity: Option<Entity>,
+#[derive(Default, Resource)]
+pub struct SelectedCell {
+    pub entity: Option<Entity>,
 }

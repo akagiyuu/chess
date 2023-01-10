@@ -3,9 +3,14 @@ pub mod materials;
 
 use crate::components::Position;
 use bevy::prelude::*;
-use bevy_mod_picking::{HoverEvent, PickableBundle, PickingEvent, SelectionEvent, DefaultPickingPlugins};
+use bevy_mod_picking::{
+    CustomHighlightPlugin, DefaultHighlighting, DefaultPickingPlugins, Highlighting, HoverEvent,
+    PickableBundle, PickingEvent, SelectionEvent,
+};
 use cell::CellBundle;
 use materials::CellMaterial;
+
+use self::cell::SelectedCell;
 
 pub fn init(
     mut commands: Commands,
@@ -34,25 +39,41 @@ pub fn init(
                     },
                 },
                 PickableBundle::default(),
+                Highlighting {
+                    initial: if (i + j) % 2 == 0 {
+                        materials.white.clone()
+                    } else {
+                        materials.black.clone()
+                    },
+                    hovered: Some(materials.highlight.clone()),
+                    selected: Some(materials.selected.clone()),
+                    pressed: None,
+                },
             ));
         }
     }
 }
 
-// pub fn test_query(
-//     mut query: Query<(Entity, &Position, &mut Handle<StandardMaterial>)>,
-//     materials: Res<CellMaterial>
-// ) {
-//     for (entity, test, mut material) in query.iter_mut() {
-//         *material = materials.white.clone();
-//     }
-// }
+pub fn select_cell(
+    mut events: EventReader<PickingEvent>,
+    mut selected_cell: ResMut<SelectedCell>,
+) {
+    for event in events.iter() {
+        if let PickingEvent::Selection(e) = event {
+            selected_cell.entity = match e {
+                SelectionEvent::JustSelected(entity) => Some(*entity),
+                SelectionEvent::JustDeselected(_) => None,
+            };
+        }
+    }
+}
 pub struct BoardPlugin;
 impl Plugin for BoardPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(DefaultPickingPlugins)
+        app.init_resource::<SelectedCell>()
             .init_resource::<CellMaterial>()
-            .add_startup_system(init)
-            .add_system_to_stage(CoreStage::PostUpdate, test);
+            .add_plugins(DefaultPickingPlugins)
+            .add_startup_system(init);
+        // .add_system_to_stage(CoreStage::PostUpdate, test);
     }
 }

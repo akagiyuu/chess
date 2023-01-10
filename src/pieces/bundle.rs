@@ -1,10 +1,10 @@
-use super::components::{PieceKind, PieceSide};
-use crate::components::Position;
+use super::components::PieceKind;
+use crate::components::{Position, MeshColor};
 use bevy::prelude::Bundle;
 
 #[derive(Debug, Bundle, Clone)]
 pub struct PieceBundle {
     pub kind: PieceKind,
-    pub side: PieceSide,
+    pub color: MeshColor,
     pub position: Position,
 }

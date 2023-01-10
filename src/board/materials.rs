@@ -10,7 +10,9 @@ pub struct CellMaterial {
 
 impl FromWorld for CellMaterial {
     fn from_world(world: &mut World) -> Self {
-        let mut materials = world.get_resource_mut::<Assets<StandardMaterial>>().unwrap();
+        let mut materials = world
+            .get_resource_mut::<Assets<StandardMaterial>>()
+            .unwrap();
 
         Self {
             black: materials.add(Color::rgb(1., 0.9, 0.9).into()),

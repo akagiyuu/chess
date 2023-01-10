@@ -1,145 +1,117 @@
 pub mod bundle;
 pub mod components;
+pub mod resources;
 
-use crate::components::Position;
+use crate::components::{MeshColor, Position};
 use bevy::prelude::*;
 use bevy::utils::HashMap;
 use bundle::PieceBundle;
-use components::{PieceKind, PieceSide};
+use components::PieceKind;
+use resources::PieceMaterial;
 
-pub fn init(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
-    let material = HashMap::from([
-        (
-            PieceSide::Black,
-            materials.add(Color::rgb(0., 0.2, 0.2).into()),
-        ),
-        (
-            PieceSide::White,
-            materials.add(Color::rgb(1., 0.8, 0.8).into()),
-        ),
-    ]);
+use self::resources::PieceMesh;
 
-    let mesh: HashMap<PieceKind, Handle<Mesh>> = HashMap::from([
-        (
-            PieceKind::King,
-            asset_server.load("models/pieces.glb#Mesh5/Primitive0"),
-        ),
-        (
-            PieceKind::Pawn,
-            asset_server.load("models/pieces.glb#Mesh2/Primitive0"),
-        ),
-        (
-            PieceKind::Queen,
-            asset_server.load("models/pieces.glb#Mesh3/Primitive0"),
-        ),
-        (
-            PieceKind::Rook,
-            asset_server.load("models/pieces.glb#Mesh4/Primitive0"),
-        ),
-        (
-            PieceKind::Bishop,
-            asset_server.load("models/pieces.glb#Mesh0/Primitive0"),
-        ),
-        (
-            PieceKind::Knight,
-            asset_server.load("models/pieces.glb#Mesh1/Primitive0"),
-        ),
-    ]);
-
+pub fn init(mut commands: Commands, materials: Res<PieceMaterial>, meshes: Res<PieceMesh>) {
     let bundle =
-        |kind: PieceKind, side: PieceSide, position: Position| -> (PbrBundle, PieceBundle) {
+        |kind: PieceKind, color: MeshColor, position: Position| -> (PbrBundle, PieceBundle) {
             (
                 PbrBundle {
-                    mesh: mesh[&kind].clone(),
-                    material: material[&side].clone(),
+                    mesh: meshes.get(&kind),
+                    material: materials.get(&color),
                     transform: Transform::from_xyz(position.x, 0., position.y)
                         .with_scale(Vec3::new(0.2, 0.2, 0.2)),
                     ..Default::default()
                 },
                 PieceBundle {
                     kind,
-                    side,
+                    color,
                     position,
                 },
             )
         };
+
     commands.spawn_batch([
-        bundle(PieceKind::Rook, PieceSide::Black, Position { x: 0., y: 0. }),
+        bundle(PieceKind::Rook, MeshColor::Black, Position { x: 0., y: 0. }),
         bundle(
             PieceKind::Knight,
-            PieceSide::Black,
+            MeshColor::Black,
             Position { x: 0., y: 1. },
         ),
         bundle(
             PieceKind::Bishop,
-            PieceSide::Black,
+            MeshColor::Black,
             Position { x: 0., y: 2. },
         ),
-        bundle(PieceKind::King, PieceSide::Black, Position { x: 0., y: 3. }),
+        bundle(PieceKind::King, MeshColor::Black, Position { x: 0., y: 3. }),
         bundle(
             PieceKind::Queen,
-            PieceSide::Black,
+            MeshColor::Black,
             Position { x: 0., y: 4. },
         ),
         bundle(
             PieceKind::Bishop,
-            PieceSide::Black,
+            MeshColor::Black,
             Position { x: 0., y: 5. },
         ),
         bundle(
             PieceKind::Knight,
-            PieceSide::Black,
+            MeshColor::Black,
             Position { x: 0., y: 6. },
         ),
-        bundle(PieceKind::Rook, PieceSide::Black, Position { x: 0., y: 7. }),
+        bundle(PieceKind::Rook, MeshColor::Black, Position { x: 0., y: 7. }),
     ]);
     for i in 0..8 {
         commands.spawn(bundle(
             PieceKind::Pawn,
-            PieceSide::Black,
+            MeshColor::Black,
             Position { x: 1., y: i as f32 },
         ));
     }
 
     commands.spawn_batch([
-        bundle(PieceKind::Rook, PieceSide::White, Position { x: 7., y: 0. }),
+        bundle(PieceKind::Rook, MeshColor::White, Position { x: 7., y: 0. }),
         bundle(
             PieceKind::Knight,
-            PieceSide::White,
+            MeshColor::White,
             Position { x: 7., y: 1. },
         ),
         bundle(
             PieceKind::Bishop,
-            PieceSide::White,
+            MeshColor::White,
             Position { x: 7., y: 2. },
         ),
-        bundle(PieceKind::King, PieceSide::White, Position { x: 7., y: 3. }),
+        bundle(PieceKind::King, MeshColor::White, Position { x: 7., y: 3. }),
         bundle(
             PieceKind::Queen,
-            PieceSide::White,
+            MeshColor::White,
             Position { x: 7., y: 4. },
         ),
         bundle(
             PieceKind::Bishop,
-            PieceSide::White,
+            MeshColor::White,
             Position { x: 7., y: 5. },
         ),
         bundle(
             PieceKind::Knight,
-            PieceSide::White,
+            MeshColor::White,
             Position { x: 7., y: 6. },
         ),
-        bundle(PieceKind::Rook, PieceSide::White, Position { x: 7., y: 7. }),
+        bundle(PieceKind::Rook, MeshColor::White, Position { x: 7., y: 7. }),
     ]);
     for i in 0..8 {
         commands.spawn(bundle(
             PieceKind::Pawn,
-            PieceSide::White,
+            MeshColor::White,
             Position { x: 6., y: i as f32 },
         ));
+    }
+}
+
+pub struct PiecesPlugin;
+impl Plugin for PiecesPlugin {
+    fn build(&self, app: &mut App) {
+        app.init_resource::<PieceMaterial>()
+            .init_resource::<PieceMesh>()
+            .add_startup_system(init);
     }
 }
