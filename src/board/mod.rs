@@ -1,16 +1,12 @@
 pub mod cell;
-pub mod materials;
+pub mod resources;
 
 use crate::components::Position;
 use bevy::prelude::*;
-use bevy_mod_picking::{
-    CustomHighlightPlugin, DefaultHighlighting, DefaultPickingPlugins, Highlighting, HoverEvent,
-    PickableBundle, PickingEvent, SelectionEvent,
-};
-use cell::CellBundle;
-use materials::CellMaterial;
+use bevy_mod_picking::{Highlighting, PickableBundle};
+use resources::CellMaterial;
 
-use self::cell::SelectedCell;
+use self::cell::{Cell, CellBundle};
 
 pub fn init(
     mut commands: Commands,
@@ -37,6 +33,7 @@ pub fn init(
                         x: i as f32,
                         y: j as f32,
                     },
+                    ..Default::default()
                 },
                 PickableBundle::default(),
                 Highlighting {
@@ -54,26 +51,9 @@ pub fn init(
     }
 }
 
-pub fn select_cell(
-    mut events: EventReader<PickingEvent>,
-    mut selected_cell: ResMut<SelectedCell>,
-) {
-    for event in events.iter() {
-        if let PickingEvent::Selection(e) = event {
-            selected_cell.entity = match e {
-                SelectionEvent::JustSelected(entity) => Some(*entity),
-                SelectionEvent::JustDeselected(_) => None,
-            };
-        }
-    }
-}
 pub struct BoardPlugin;
 impl Plugin for BoardPlugin {
     fn build(&self, app: &mut App) {
-        app.init_resource::<SelectedCell>()
-            .init_resource::<CellMaterial>()
-            .add_plugins(DefaultPickingPlugins)
-            .add_startup_system(init);
-        // .add_system_to_stage(CoreStage::PostUpdate, test);
+        app.init_resource::<CellMaterial>().add_startup_system(init);
     }
 }

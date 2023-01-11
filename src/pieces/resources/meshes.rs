@@ -13,7 +13,7 @@ pub struct PieceMesh {
 }
 impl FromWorld for PieceMesh {
     fn from_world(world: &mut World) -> Self {
-        let mut asset_server = world.get_resource_mut::<AssetServer>().unwrap();
+        let asset_server = world.get_resource::<AssetServer>().unwrap();
 
         Self {
             king: asset_server.load("models/pieces.glb#Mesh5/Primitive0"),

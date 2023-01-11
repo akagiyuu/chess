@@ -1,5 +1,4 @@
 use bevy::prelude::Component;
-use crate::components::Position;
 
 #[derive(Hash, PartialEq, Eq, Debug, Default, Clone, Copy, Component)]
 pub enum PieceKind {
@@ -11,3 +10,6 @@ pub enum PieceKind {
     #[default]
     Pawn,
 }
+
+#[derive(Component, Clone, Default, Debug)]
+pub struct Piece;

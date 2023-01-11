@@ -1,18 +1,11 @@
 use crate::components::Position;
 use bevy::prelude::*;
 
-#[derive(Bundle, Clone)]
+#[derive(Component, Clone, Default)]
+pub struct Cell;
+
+#[derive(Bundle, Clone, Default)]
 pub struct CellBundle {
-    pub position: Position
-}
-
-impl CellBundle {
-    fn is_white(&self) -> bool {
-        ((self.position.x + self.position.y)as i32) % 2 == 0
-    }
-}
-
-#[derive(Default, Resource)]
-pub struct SelectedCell {
-    pub entity: Option<Entity>,
+    pub position: Position,
+    pub _cell: Cell
 }
