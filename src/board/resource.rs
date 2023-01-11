@@ -22,3 +22,6 @@ impl FromWorld for CellMaterial {
         }
     }
 }
+
+#[derive(Resource, Debug, Default)]
+pub struct BoardMatrix(pub [[bool; 8]; 8]);

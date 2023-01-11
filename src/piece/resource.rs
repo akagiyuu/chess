@@ -1,6 +1,32 @@
 use bevy::prelude::*;
 
-use crate::pieces::components::PieceKind;
+use super::component::{PieceKind, PieceSide};
+
+#[derive(Resource)]
+pub struct PieceMaterial {
+    black: Handle<StandardMaterial>,
+    white: Handle<StandardMaterial>,
+}
+impl FromWorld for PieceMaterial {
+    fn from_world(world: &mut World) -> Self {
+        let mut materials = world
+            .get_resource_mut::<Assets<StandardMaterial>>()
+            .unwrap();
+
+        Self {
+            black: materials.add(Color::rgb(0., 0.2, 0.2).into()),
+            white: materials.add(Color::rgb(1., 0.8, 0.8).into()),
+        }
+    }
+}
+impl PieceMaterial {
+    pub fn get(&self, color: &PieceSide) -> Handle<StandardMaterial> {
+        match color {
+            PieceSide::White => self.black.clone(),
+            PieceSide::Black => self.white.clone(),
+        }
+    }
+}
 
 #[derive(Resource)]
 pub struct PieceMesh {
