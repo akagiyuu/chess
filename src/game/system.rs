@@ -1,7 +1,7 @@
 use super::event::MoveEvent;
 use super::resource::SelectedCell;
-use crate::board::prelude::Square;
-use crate::piece::prelude::Piece;
+use crate::board::component::Square;
+use crate::piece::component::Piece;
 use bevy::prelude::*;
 use bevy_mod_picking::PickingCamera;
 

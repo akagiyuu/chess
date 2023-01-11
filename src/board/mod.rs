@@ -3,4 +3,3 @@ pub mod resource;
 pub mod startup;
 pub mod component;
 pub mod bundle;
-pub mod prelude;
